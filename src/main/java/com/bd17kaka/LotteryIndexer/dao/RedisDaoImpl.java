@@ -24,11 +24,11 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 		
 		if (null != keys) {
 			
-			ShardedJedis redis = getConnection();
+			// ShardedJedis redis = getConnection();
 			
 			for (String key : keys) {
 				
-				redis.hincrBy(redisKey, key, 1);
+				// redis.hincrBy(redisKey, key, 1);
 				log.info("为" + key + "的出现次数加1");
 				
 			}
