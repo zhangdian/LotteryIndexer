@@ -18,15 +18,14 @@ import redis.clients.jedis.ShardedJedis;
 public class RedisDaoImpl extends RedisUtils implements RedisDao {
 
 	private static final Log log = LogFactory.getLog(SSHIndexer.class);
-	
-	@Override
-	public void insert(List<String> keys, String redisKey) {
+
+	public void insert(List<String> indexs, String redisKey) {
 		
-		if (null != keys) {
+		if (null != indexs) {
 			
 			ShardedJedis redis = getConnection();
 			
-			for (String key : keys) {
+			for (String key : indexs) {
 				
 				redis.hincrBy(redisKey, key, 1);
 				log.info("为" + key + "的出现次数加1");
@@ -35,6 +34,7 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 			
 			returnConnection(redis);
 		}
+		
 		
 	}
 

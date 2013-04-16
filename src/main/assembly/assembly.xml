@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+	<id>1.0.0</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>src/main/assembly/shell</directory>
+			<outputDirectory>LotteryIndexer/shell</outputDirectory>
+			<fileMode>0755</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/assembly/conf</directory>
+			<outputDirectory>LotteryIndexer/conf</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
+	</fileSets>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>LotteryIndexer/lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+</assembly>
