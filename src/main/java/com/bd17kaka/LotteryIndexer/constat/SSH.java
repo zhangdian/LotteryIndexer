@@ -45,7 +45,7 @@ public enum SSH {
 		public boolean isValidNum(int num) {
 			return (num <= MAX) && (num >= MIN);
 		}
-		public static final int MAX = 15;
+		public static final int MAX = 16;
 		public static final int MIN = 1;
 		public static final int TOTAL = 1;
 		

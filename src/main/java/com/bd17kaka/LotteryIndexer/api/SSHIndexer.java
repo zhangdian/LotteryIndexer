@@ -35,7 +35,6 @@ public class SSHIndexer {
 	 * 						0 -- 参数args[1]是号码
 	 * 						1 -- 参数args[1]是文件路径
 	 * 			args[1]: 具体来源见args[0], 内容是7个数字，以‘,’分隔。前六个是红球，最后一个是篮球
-	 * 			args[2]: 索引的深度
 	 */
 	public static void main(String[] args) {
 
@@ -91,16 +90,11 @@ public class SSHIndexer {
 				blueList.add(input[i]);
 			}
 			
-			// 获取索引深度，默认是2
-			int depth = 2;
-			try {
-				depth = Integer.parseInt(args[2]);
-			} catch (Exception e) {
-				depth = 2;
-			}
-			
-			List<String> keyList = redIndexer(redList, depth);
+			List<String> keyList = null;
+			keyList = redIndexer(redList);
 			redisDao.insert(keyList, SSH.RED.getRedisKey());
+			keyList = blueIndexer(blueList);
+			redisDao.insert(keyList, SSH.BLUE.getRedisKey());
 			
 		} else if ("1".equals(args[0])) {
 			
@@ -116,6 +110,8 @@ public class SSHIndexer {
 			BufferedReader br = new BufferedReader(fr);
 			
 			String line = null;
+			List<String> redKeyList = new ArrayList<String>();
+			List<String> blueKeyList = new ArrayList<String>();
 			while (true) {
 				
 				// 读取一行数据
@@ -131,9 +127,9 @@ public class SSHIndexer {
 				}
 				
 				// 获取开奖号码，以逗号隔开
-				String[] input = line.split(",");
 				List<String> redList = new ArrayList<String>();
 				List<String> blueList = new ArrayList<String>();
+				String[] input = line.split(",");
 				
 				for (int i = 0; i < SSH.RED.getTOTAL(); i++) {
 					
@@ -171,18 +167,13 @@ public class SSHIndexer {
 					blueList.add(input[i]);
 				}
 			
-				// 获取索引深度，默认是2
-				int depth = 2;
-				try {
-					depth = Integer.parseInt(args[2]);
-				} catch (Exception e) {
-					depth = 2;
-				}
-				
-				List<String> keyList = redIndexer(redList, depth);
-				redisDao.insert(keyList, SSH.RED.getRedisKey());
+				redKeyList.addAll(redIndexer(redList));
+				blueKeyList.addAll(blueIndexer(blueList));
 			}
 			
+			redisDao.insert(redKeyList, SSH.RED.getRedisKey());
+			redisDao.insert(blueKeyList, SSH.BLUE.getRedisKey());
+
 			try {
 				br.close();
 				fr.close();
@@ -204,7 +195,7 @@ public class SSHIndexer {
 	 * 只考虑前面和后面一位数字对当前位数字的影响
 	 * @return
 	 */
-	private static List<String> redIndexer(List<String> list, int depth)  {
+	private static List<String> redIndexer(List<String> list)  {
 		
 		List<String> rs = new ArrayList<String>();
 		
@@ -215,8 +206,7 @@ public class SSHIndexer {
 			key = list.get(i);
 			rs.add(key);
 			
-			int end = i + depth;
-			for (int j = i + 1; j < (end > size ? size : end); j++) {
+			for (int j = i + 1; j < size; j++) {
 				
 				key += ":" + list.get(j);
 				rs.add(key);
@@ -227,7 +217,13 @@ public class SSHIndexer {
 		return rs;
 	}
 	
-	private static List<String> blue(List<String> list, int depth) {
-		return null;
+	/**
+	 * 对篮球进行索引
+	 * @param list
+	 * @param depth
+	 * @return
+	 */
+	private static List<String> blueIndexer(List<String> list) {
+		return list;
 	}
 }

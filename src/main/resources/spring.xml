@@ -24,7 +24,7 @@
 	</bean>
 	<!-- <bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo"> 
 		<constructor-arg index="0" value="127.0.0.1" /> <constructor-arg index="1" 
-		value="6379" /> <property name="password" value="199111@0Smy" /> </bean> -->
+		value="6379" /> </bean> -->
 
 	<bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo">
 		<constructor-arg index="0" value="69.85.92.97" />
