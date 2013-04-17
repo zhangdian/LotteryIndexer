@@ -1,7 +1,13 @@
 package com.bd17kaka.LotteryIndexer.constat;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author bd17kaka 双色球
@@ -9,7 +15,9 @@ import java.util.Map;
 public enum SSH {
 
 	RED(0, "RED") {
-
+		
+		private Log log = LogFactory.getLog("SSH:RED");
+		
 		@Override
 		public boolean isValidNum(int num) {
 			return (num <= MAX) && (num >= MIN);
@@ -37,10 +45,63 @@ public enum SSH {
 		public String getRedisKey() {
 			return "ssh:red";
 		}
+
+		@Override
+		public List<String> getNumsFromInuput(String line) {
+
+			String[] input = line.split(",");
+			
+			List<String> redList = new ArrayList<String>();
+			for (int i = 0; i < SSH.RED.getTOTAL(); i++) {
+				
+				int num = 0;
+				try {
+					num = Integer.parseInt(input[i]);
+				} catch (Exception e) {
+					log.error("序列 " + line + " 中，" + input[i] + " 不是合法数字");
+					continue;
+				}
+				
+				if (!SSH.RED.isValidNum(num)) {
+					log.error("序列 " + line + " 中，" + input[i] + " 不是有效数字，必须在"
+							+ SSH.RED.getMIN() + "和" + SSH.RED.getMAX() + "之间");
+					continue;
+				}
+				redList.add(input[i]);
+			}
+			
+			return redList;
+		}
+
+		@Override
+		public List<String> indexer(List<String> list) {
+			
+			Collections.sort(list);
+			
+			List<String> rs = new ArrayList<String>();
+			String key = "";
+			int size = list.size();
+			for (int i = 0; i < size; i++) {
+				
+				key = list.get(i);
+				rs.add(key);
+				
+				for (int j = i + 1; j < size; j++) {
+					
+					key += ":" + list.get(j);
+					rs.add(key);
+				}
+				key = "";
+			}
+			
+			return rs;
+		}
 		
 	},
 	BLUE(1, "BLUE") {
 
+		private Log log = LogFactory.getLog("SSH:BLUE");
+		
 		@Override
 		public boolean isValidNum(int num) {
 			return (num <= MAX) && (num >= MIN);
@@ -67,6 +128,44 @@ public enum SSH {
 		@Override
 		public String getRedisKey() {
 			return "ssh:blue";
+		}
+
+		@Override
+		public List<String> getNumsFromInuput(String line) {
+
+			String[] input = line.split(",");
+			
+			List<String> blueList = new ArrayList<String>();
+			for (int i = SSH.RED.getTOTAL(); i < SSH.TOTAL; i++) {
+				
+				int num = 0;
+				try {
+					num = Integer.parseInt(input[i]);
+				} catch (Exception e) {
+					log.error("序列 " + line + " 中，" + input[i] + " 不是合法数字");
+					continue;
+				}
+				
+				if (!SSH.BLUE.isValidNum(num)) {
+					log.error("序列 " + line + " 中，" + input[i] + " 不是有效数字，必须在"
+							+ SSH.BLUE.getMIN() + "和" + SSH.BLUE.getMAX() + "之间");
+					continue;
+				}
+				blueList.add(input[i]);
+			}
+		
+			return blueList;
+		}
+
+		/* (non-Javadoc)
+		 * @see com.bd17kaka.LotteryIndexer.constat.SSH#indexer(java.util.List)
+		 * SSH的篮球只有一个，所以不需要做过多的操作 
+		 */
+		@Override
+		public List<String> indexer(List<String> list) {
+			
+			return list;
+			
 		}
 		
 	};
@@ -114,9 +213,42 @@ public enum SSH {
 		return SSH_MAP.get(type);
 	}
 
+	/**
+	 * 是否是合法数字
+	 * @param num
+	 * @return
+	 */
 	public abstract boolean isValidNum(int num);
+	/**
+	 * 获取最大值
+	 * @return
+	 */
 	public abstract int getMAX();
+	/**
+	 * 获取最小值
+	 * @return
+	 */
 	public abstract int getMIN();
+	/**
+	 * 获取某种球的总数
+	 * @return
+	 */
 	public abstract int getTOTAL();
+	/**
+	 * 获取某种球在Redis中的key
+	 * @return
+	 */
 	public abstract String getRedisKey();
+	/**
+	 * 从输入中获取所有球号
+	 * @param line
+	 * @return
+	 */
+	public abstract List<String> getNumsFromInuput(String line);
+	/**
+	 * 对输入的球号进行索引
+	 * @param list
+	 * @return
+	 */
+	public abstract List<String> indexer(List<String> list);
 }
