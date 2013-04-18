@@ -19,7 +19,7 @@ public class SSHSearcher {
 	 */
 	public static void main(String[] args) {
 		
-		String line = "07,08,14,25,26,28,13";
+		String line = "";
 		
 		String[] tokens = line.split(",");
 		double fm = 0.0;
