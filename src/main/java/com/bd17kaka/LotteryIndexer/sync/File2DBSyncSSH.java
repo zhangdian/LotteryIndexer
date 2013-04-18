@@ -152,7 +152,7 @@ public class File2DBSyncSSH {
 				} else {
 					sshResult.setType(1);
 				}
-				// sshResultDao.insert(sshResult);
+				sshResultDao.insert(sshResult);
 			}
 			
 		} while (false);
