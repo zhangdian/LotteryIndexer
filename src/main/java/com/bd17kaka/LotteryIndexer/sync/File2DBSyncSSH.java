@@ -38,6 +38,13 @@ public class File2DBSyncSSH {
 	 */
 	public static void main(String[] args) {
 
+		if (args.length == 1) {
+			IN_FILE_PATH = args[0];
+		}
+		if (args.length == 2) {
+			OUT_FILE_PATH = args[1];
+		}
+		
 		FileReader fr = null;
 		try {
 			fr = new FileReader(IN_FILE_PATH);
