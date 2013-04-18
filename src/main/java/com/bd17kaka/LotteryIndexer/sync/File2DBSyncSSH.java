@@ -138,7 +138,7 @@ public class File2DBSyncSSH {
 				}
 				awardStr = awardStr.substring(0, awardStr.length() - 1);
 				try {
-					fw.write(awardStr);
+					fw.write(tokens[1] + " " + awardStr);
 					fw.write("\r\n");
 				} catch (IOException e) {}
 				
@@ -147,11 +147,7 @@ public class File2DBSyncSSH {
 				sshResult.setId(tokens[1]);
 				sshResult.setResult(awardStr);
 				sshResult.setTime(date);
-				if (curYear < 2010) {
-					sshResult.setType(0);
-				} else {
-					sshResult.setType(1);
-				}
+				sshResult.setType(0);
 				sshResultDao.insert(sshResult);
 			}
 			

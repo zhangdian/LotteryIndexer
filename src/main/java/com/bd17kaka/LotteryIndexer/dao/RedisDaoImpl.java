@@ -1,6 +1,5 @@
 package com.bd17kaka.LotteryIndexer.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -30,6 +29,7 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 				
 				redis.hincrBy(redisKey, key, 1);
 				log.info("为" + key + "的出现次数加1");
+				
 			}
 			
 			returnConnection(redis);

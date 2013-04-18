@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,15 +13,19 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.bd17kaka.LotteryIndexer.constat.SSH;
 import com.bd17kaka.LotteryIndexer.dao.RedisDao;
+import com.bd17kaka.LotteryIndexer.dao.SSHNewCombinationDao;
+import com.bd17kaka.LotteryIndexer.po.SSHNewCombination;
 
 public class SSHIndexer {
 
 	private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/spring.xml");
 	private static RedisDao redisDao = (RedisDao) context.getBean("redisDao");
+	private static SSHNewCombinationDao sshNewCombinationDao = (SSHNewCombinationDao) context.getBean("sshNewCombinationDao");
 	private static final Log log = LogFactory.getLog(SSHIndexer.class);
 	
 	/**
 	 * 双色球索引
+	 * 将第一次出现的组合保存到DB: ssh_new_combination
 	 * @param args 
 	 * 			args[0]: 索引来源
 	 * 						0 -- 参数args[1]是号码
@@ -41,19 +44,39 @@ public class SSHIndexer {
 			return;
 		}
 		
-		if ("0".equals(args[0])) {
+		// 
+		String type = args[0]; 
+		
+		if ("0".equals(type)) {
 
 			String line = args[1];
+			
+			String[] tokens = line.split(" ");
+			String id = tokens[0];
+			line = tokens[1];
+			
 			List<String> redList = SSH.RED.getNumsFromInuput(line);
 			List<String> blueList = SSH.BLUE.getNumsFromInuput(line);
 			
-			List<String> keyList = null;
-			keyList = SSH.RED.indexer(redList);
-			redisDao.insert(keyList, SSH.RED.getRedisKey());
-			keyList = SSH.BLUE.indexer(blueList);
-			redisDao.insert(keyList, SSH.BLUE.getRedisKey());
+			List<String> redKeyList = null;
+			List<String> blueKeyList = null;
+			redKeyList = SSH.RED.indexer(redList);
+			redisDao.insert(redKeyList, SSH.RED.getRedisKey());
+			blueKeyList = SSH.BLUE.indexer(blueList);
+			redisDao.insert(blueKeyList, SSH.BLUE.getRedisKey());
 			
-		} else if ("1".equals(args[0])) {
+			// 每个组合在list中只会出现一次，那么当从redis中get获得的值是1的时候，说明是新出现的
+			// 只需要考虑红球
+			for (String s : redKeyList) {
+				SSHNewCombination sshNewCombination = new SSHNewCombination();
+				sshNewCombination.setId(id);
+				sshNewCombination.setLength(s.split(":").length);
+				sshNewCombination.setCombination(s);
+				sshNewCombination.setNum(1);
+				sshNewCombinationDao.insert(sshNewCombination);
+			}
+			
+		} else if ("1".equals(type)) {
 			
 			String filePath = args[1];
 			
@@ -67,8 +90,6 @@ public class SSHIndexer {
 			BufferedReader br = new BufferedReader(fr);
 			
 			String line = null;
-			List<String> redKeyList = new ArrayList<String>();
-			List<String> blueKeyList = new ArrayList<String>();
 			while (true) {
 				
 				// 读取一行数据
@@ -83,16 +104,33 @@ public class SSHIndexer {
 					continue;
 				}
 				
+				// 
+				String[] tokens = line.split(" ");
+				String id = tokens[0];
+				line = tokens[1];
+				
 				// 获取开奖号码，以逗号隔开
 				List<String> redList = SSH.RED.getNumsFromInuput(line);
 				List<String> blueList = SSH.BLUE.getNumsFromInuput(line);
-				redKeyList.addAll(SSH.RED.indexer(redList));
-				blueKeyList.addAll(SSH.BLUE.indexer(blueList));
+				List<String> redKeyList = null;
+				List<String> blueKeyList = null;
+				redKeyList = SSH.RED.indexer(redList);
+				redisDao.insert(redKeyList, SSH.RED.getRedisKey());
+				blueKeyList = SSH.BLUE.indexer(blueList);
+				redisDao.insert(blueKeyList, SSH.BLUE.getRedisKey());
+				
+				// 每个组合在list中只会出现一次，那么当从redis中get获得的值是1的时候，说明是新出现的
+				// 只需要考虑红球
+				for (String s : redKeyList) {
+					SSHNewCombination sshNewCombination = new SSHNewCombination();
+					sshNewCombination.setId(id);
+					sshNewCombination.setLength(s.split(":").length);
+					sshNewCombination.setCombination(s);
+					sshNewCombination.setNum(1);
+					sshNewCombinationDao.insert(sshNewCombination);
+				}
 			}
 			
-			redisDao.insert(redKeyList, SSH.RED.getRedisKey());
-			redisDao.insert(blueKeyList, SSH.BLUE.getRedisKey());
-
 			try {
 				br.close();
 				fr.close();
