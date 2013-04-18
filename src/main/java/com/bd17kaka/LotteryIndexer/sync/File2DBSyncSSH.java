@@ -26,7 +26,7 @@ import com.bd17kaka.LotteryIndexer.po.SSHResult;
  */
 public class File2DBSyncSSH {
 
-	private static String IN_FILE_PATH = "E:\\Dropbox\\proj\\lottery\\双色球历史记录.txt";
+	private static String IN_FILE_PATH = "E:\\Dropbox\\proj\\lottery\\ssh.txt";
 	private static String OUT_FILE_PATH = "E:\\Dropbox\\proj\\lottery\\";
 	
 	private static ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/spring.xml");

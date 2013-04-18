@@ -2,7 +2,7 @@
 
 DEPLOY_HOME=`echo $(dirname $(pwd))`
 
-CONFIG_DIR=$DEPLOY_HOME/conf/conf/ssh_file2db_sync
+CONFIG_DIR=$DEPLOY_HOME/conf/conf_ssh_file2db_sync
 LIB_DIR=$DEPLOY_HOME/lib
 LIB_JARS=`ls  $LIB_DIR | grep .jar|awk '{print "'$LIB_DIR'/"$0}'|tr "\n" ":"`
 
