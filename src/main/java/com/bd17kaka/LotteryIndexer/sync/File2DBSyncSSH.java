@@ -38,12 +38,20 @@ public class File2DBSyncSSH {
 	 */
 	public static void main(String[] args) {
 
+		for (int i =0; i < args.length; i++) {
+			System.out.println(args[i]);
+		}
+		
 		if (args.length == 1) {
 			IN_FILE_PATH = args[0];
 		}
 		if (args.length == 2) {
+			IN_FILE_PATH = args[0];
 			OUT_FILE_PATH = args[1];
 		}
+		
+		System.out.println(IN_FILE_PATH);
+		System.out.println(OUT_FILE_PATH);
 		
 		FileReader fr = null;
 		try {
@@ -144,7 +152,7 @@ public class File2DBSyncSSH {
 				} else {
 					sshResult.setType(1);
 				}
-				sshResultDao.insert(sshResult);
+				// sshResultDao.insert(sshResult);
 			}
 			
 		} while (false);
