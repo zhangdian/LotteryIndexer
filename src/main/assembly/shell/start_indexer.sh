@@ -15,7 +15,8 @@ JAVA_MEM_OPTS="-server -Xms$deployMem -Xmx$deployMem -XX:PermSize=128m -XX:Survi
 #echo $LIB_JAR
 echo -e "Starting SSHIndexer process...\c"
 
-nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.api.SSHIndexer $1 $2 &
+#nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.api.SSHIndexer $1 $2 &
+nohup java -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.api.SSHIndexer $1 $2 &
 
 PID=`ps aux|grep SSHIndexer|grep java|awk '{print $2}'`
 echo -e "\nOK! SSHIndexer pid=$PID ."

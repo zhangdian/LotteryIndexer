@@ -15,7 +15,8 @@ JAVA_MEM_OPTS="-server -Xms$deployMem -Xmx$deployMem -XX:PermSize=128m -XX:Survi
 #echo $LIB_JAR
 echo -e "Starting File2DBSyncSSH process...\c"
 
-nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.sync.File2DBSyncSSH $1 $2 &
+#nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.sync.File2DBSyncSSH $1 $2 &
+nohup java -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.sync.File2DBSyncSSH $1 $2 &
 
 PID=`ps aux|grep SSHIndexer|grep java|awk '{print $2}'`
 echo -e "\nOK! SSHIndexer pid=$PID ."
