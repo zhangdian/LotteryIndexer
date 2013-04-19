@@ -23,4 +23,12 @@ public interface RedisDao {
 	 */
 	int getNum(String redisKey, String field);
 	
+	/**
+	 * 设置值
+	 * @param redisKey
+	 * @param field
+	 * @param value
+	 */
+	void hset(String redisKey, String field, String value);
+	
 }

@@ -52,4 +52,14 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 		returnConnection(redis);
 		return value;
 	}
+
+	public void hset(String redisKey, String field, String value) {
+
+		ShardedJedis redis = getConnection();
+
+		redis.hset(redisKey, field, value);
+		
+		returnConnection(redis);
+		
+	}
 }

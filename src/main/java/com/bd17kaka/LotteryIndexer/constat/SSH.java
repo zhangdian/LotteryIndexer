@@ -96,6 +96,11 @@ public enum SSH {
 			
 			return rs;
 		}
+
+		@Override
+		public String getRedisKeyForCombination(int length) {
+			return "ssh:red:combination:" + length;
+		}
 		
 	},
 	BLUE(1, "BLUE") {
@@ -166,6 +171,11 @@ public enum SSH {
 			
 			return list;
 			
+		}
+
+		@Override
+		public String getRedisKeyForCombination(int length) {
+			return "ssh:blue:combination:" + length;
 		}
 		
 	};
@@ -239,6 +249,14 @@ public enum SSH {
 	 * @return
 	 */
 	public abstract String getRedisKey();
+	/**
+	 * 获取某种球的组合在Redis中的key
+	 * key -- ssh:red:combination:($length)
+	 * field -- ($firstNum)
+	 * value -- ($num)
+	 * @return
+	 */
+	public abstract String getRedisKeyForCombination(int length);
 	/**
 	 * 从输入中获取所有球号
 	 * @param line

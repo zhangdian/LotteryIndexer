@@ -1,5 +1,7 @@
 package com.bd17kaka.LotteryIndexer.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 
 import org.springframework.stereotype.Repository;
@@ -33,4 +35,32 @@ public class SSHNewCombinationDaoImpl extends SpringJDBCDaoSupport implements SS
 		n = this.getJdbcTemplate().update(sql, args, argTypes);
 		return n > 0 ? true : false;
 	}
+
+	public int getNumByLengthAndFirstNum(int length, String firstNum) {
+		String sql = "select sum(num) from "+TABLE+" where length=? and combination like ?";
+		Object[] args = new Object[] { length, firstNum+"%" };
+		int[] argTypes = new int[] { Types.INTEGER, Types.VARCHAR };
+
+		int n = 0;
+		
+		try {
+			n = this.getJdbcTemplate().queryForInt(sql, args, argTypes);
+		} catch (Exception e) {
+			n = 0;
+		}
+		return n;
+	}
+	
+	private SSHNewCombination rsToAPIKey(ResultSet rs) throws SQLException {
+		SSHNewCombination po = null;
+		if (rs != null) {
+			po = new SSHNewCombination();
+			po.setCombination(rs.getString("combination"));
+			po.setId(rs.getString("id"));
+			po.setLength(rs.getInt("length"));
+			po.setNum(rs.getInt("num"));
+		}
+		return po;
+	}
+	
 }

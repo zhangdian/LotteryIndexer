@@ -14,5 +14,11 @@ public interface SSHNewCombinationDao {
 	 * @return
 	 */
 	boolean insert(SSHNewCombination sshNewCombination);
+	
+	/**
+	 * 获取所有以firstNum开头的，length长度的组合的出现次数
+	 * @return
+	 */
+	int getNumByLengthAndFirstNum(int length, String firstNum);
 
 }
