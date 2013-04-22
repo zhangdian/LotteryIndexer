@@ -98,8 +98,13 @@ public enum SSH {
 		}
 
 		@Override
-		public String getRedisKeyForCombination(int length) {
-			return "ssh:red:combination:" + length;
+		public String getRedisKeyForCombinationNumByLengthAndFirstNum(int length) {
+			return "ssh:red:combination:num:" + length;
+		}
+
+		@Override
+		public String getRedisKeyForCombinationSizeByNum() {
+			return "ssh:red:combination:size";
 		}
 		
 	},
@@ -174,8 +179,13 @@ public enum SSH {
 		}
 
 		@Override
-		public String getRedisKeyForCombination(int length) {
-			return "ssh:blue:combination:" + length;
+		public String getRedisKeyForCombinationNumByLengthAndFirstNum(int length) {
+			return "ssh:blue:combination:num:" + length;
+		}
+
+		@Override
+		public String getRedisKeyForCombinationSizeByNum() {
+			return "ssh:blue:combination:size";
 		}
 		
 	};
@@ -250,13 +260,23 @@ public enum SSH {
 	 */
 	public abstract String getRedisKey();
 	/**
-	 * 获取某种球的组合在Redis中的key
-	 * key -- ssh:red:combination:($length)
+	 * 指定长度，以某个球号开始的组合出现的次数  
+	 * key -- ssh:red:combination:num:($length)
 	 * field -- ($firstNum)
 	 * value -- ($num)
 	 * @return
 	 */
-	public abstract String getRedisKeyForCombination(int length);
+	public abstract String getRedisKeyForCombinationNumByLengthAndFirstNum(int length);
+	/**
+	 * 指定出现次数的组合个数
+	 * 在马尔科夫二元模型中使用，只存储二元组合
+	 * key -- ssh:red:combination:size
+	 * field -- ($num)
+	 * value -- size
+	 * @param num 组合出现的个数
+	 * @return
+	 */
+	public abstract String getRedisKeyForCombinationSizeByNum();
 	/**
 	 * 从输入中获取所有球号
 	 * @param line

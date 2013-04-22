@@ -1,5 +1,7 @@
 package com.bd17kaka.LotteryIndexer.dao;
 
+import java.util.List;
+
 import com.bd17kaka.LotteryIndexer.po.SSHNewCombination;
 
 
@@ -20,5 +22,22 @@ public interface SSHNewCombinationDao {
 	 * @return
 	 */
 	int getNumByLengthAndFirstNum(int length, String firstNum);
+	
+	
+	/**
+	 * 获取指定长度的组合所有可能的出现个数
+	 * select num from ssh_new_combination where length=2 group by num;
+	 * @param length
+	 * @return
+	 */
+	List<SSHNewCombination> listNumByLength(int length);
+	
+	/**
+	 * 获取指定长度、指定出现个数num的组合的个数
+	 * @param num
+	 * @param length
+	 * @return
+	 */
+	int getSizeByNumAndLength(int num, int length);
 
 }
