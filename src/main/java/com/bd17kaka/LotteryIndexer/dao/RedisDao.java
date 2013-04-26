@@ -17,11 +17,11 @@ public interface RedisDao {
 	void insert(List<String> indexs, String redisKey);
 	
 	/**
-	 * 获取某个key出现的次数
+	 * 获取值
 	 * @param key
 	 * @return
 	 */
-	int getNum(String redisKey, String field);
+	int hget(String redisKey, String field);
 	
 	/**
 	 * 设置值

@@ -25,20 +25,20 @@ public class SSHSearcher {
 		double fm = 0.0;
 		
 		// 首先获取第一个元素出现的概率
-		int value = redisDao.getNum(SSH.RED.getRedisKey(), tokens[0]);
+		int value = redisDao.hget(SSH.RED.getRedisKey(), tokens[0]);
 		int totalValue = 0;
 		for (int i = 0; i < 10; i++) {
-			totalValue += redisDao.getNum(SSH.RED.getRedisKey(), "0"+i);
+			totalValue += redisDao.hget(SSH.RED.getRedisKey(), "0"+i);
 		}
 		for (int i = 10; i < SSH.RED.getMAX(); i++) {
-			totalValue += redisDao.getNum(SSH.RED.getRedisKey(), i+"");
+			totalValue += redisDao.hget(SSH.RED.getRedisKey(), i+"");
 		}
 		fm = (double)value / (double)totalValue;
 		
 		// 循环计算后面的概率
 		for (int i = 0; i < tokens.length - 2; i++) {
-			value = redisDao.getNum(SSH.RED.getRedisKey(), tokens[i] + ":" + tokens[i + 1]);
-			totalValue = redisDao.getNum(SSH.RED.getRedisKey(), tokens[i]);
+			value = redisDao.hget(SSH.RED.getRedisKey(), tokens[i] + ":" + tokens[i + 1]);
+			totalValue = redisDao.hget(SSH.RED.getRedisKey(), tokens[i]);
 			System.out.println(fm);
 			System.out.println(value);
 			System.out.println(totalValue);

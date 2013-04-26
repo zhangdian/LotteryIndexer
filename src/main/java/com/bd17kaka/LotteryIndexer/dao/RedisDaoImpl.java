@@ -37,7 +37,7 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 		
 	}
 
-	public int getNum(String key, String field) {
+	public int hget(String key, String field) {
 		
 		ShardedJedis redis = getConnection();
 
