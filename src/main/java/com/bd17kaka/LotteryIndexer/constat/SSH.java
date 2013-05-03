@@ -374,10 +374,10 @@ public enum SSH {
 		
 		/**
 		 * 获取开奖结果的球号分布
-		 * @param input
+		 * @param input 经过SSH.getNumsFromInuput()处理之后的所有球号列表
 		 * @return
 		 */
-		public static RedDistributed getBallRedDistributed(List<String> input) {
+		public static RedDistributed getRedBallDistributed(List<String> input) {
 			
 			if (null == input) {
 				return null;
@@ -499,6 +499,6 @@ public enum SSH {
 			System.out.println(string);
 		}
 		
-		System.out.println(RedDistributed.getBallRedDistributed(list));
+		System.out.println(RedDistributed.getRedBallDistributed(list));
 	}
 }

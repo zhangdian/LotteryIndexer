@@ -20,18 +20,23 @@ public class SSHResult implements java.io.Serializable {
 	 */
 	private String result;
 	/**
-	 * 记录类型，标记新旧结果
-	 * 对于旧结果，字段为0，不记录新组合到ssh_new_combination中
-	 * 对于新结果，字段为1，记录新组合到ssh_new_combination中
+	 * 记录类型，标记新旧结果 字段目前没有使用
 	 */
 	private int type;
-	
-	public SSHResult(String id, Date time, String result, int type) {
+
+	/**
+	 * SSH结果中，球号的分布情况
+	 */
+	private int distribution;
+
+	public SSHResult(String id, Date time, String result, int type,
+			int distribution) {
 		super();
 		this.id = id;
 		this.time = time;
 		this.result = result;
 		this.type = type;
+		this.distribution = distribution;
 	}
 
 	public SSHResult() {
@@ -70,9 +75,17 @@ public class SSHResult implements java.io.Serializable {
 		this.type = type;
 	}
 
+	public int getDistribution() {
+		return distribution;
+	}
+
+	public void setDistribution(int distribution) {
+		this.distribution = distribution;
+	}
+
 	@Override
 	public String toString() {
 		return "SSHResult [id=" + id + ", time=" + time + ", result=" + result
-				+ ", type=" + type + "]";
+				+ ", type=" + type + ", distribution=" + distribution + "]";
 	}
 }
