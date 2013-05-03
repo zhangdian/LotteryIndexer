@@ -17,17 +17,19 @@ public class SSHResultDaoImpl extends SpringJDBCDaoSupport implements SSHResultD
 	
 	public boolean insert(SSHResult sshResult) {
 		
-		String sql = "insert into " + TABLE + " values(?,?,?,?)";
+		String sql = "insert into " + TABLE + " values(?,?,?,?,?)";
 		Object[] args = new Object[] { 
 				sshResult.getId(), 
 				sshResult.getTime(), 
 				sshResult.getResult(), 
-				sshResult.getType() 
+				sshResult.getType(),
+				sshResult.getDistribution()
 		};
 		int[] argTypes = new int[] { 
 				Types.VARCHAR,
 				Types.DATE,
 				Types.VARCHAR,
+				Types.INTEGER,
 				Types.INTEGER
 		};
 		int n = 0;
