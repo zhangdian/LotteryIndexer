@@ -410,6 +410,7 @@ public enum SSH {
 			 * Left个数*100 + Middle个数*10 + Right个数 * 1
 			 */
 			int type = distributedList[0] * 100 + distributedList[1] * 10 + distributedList[2] * 1;
+			System.out.println(type);
 			return RedDistributed.getRedDistributed(type);
 		}
 	}
