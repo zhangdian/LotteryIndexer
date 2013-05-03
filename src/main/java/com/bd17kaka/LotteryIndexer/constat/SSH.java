@@ -59,13 +59,13 @@ public enum SSH {
 					num = Integer.parseInt(input[i]);
 				} catch (Exception e) {
 					log.error("序列 " + line + " 中，" + input[i] + " 不是合法数字");
-					continue;
+					return null;
 				}
 				
 				if (!SSH.RED.isValidNum(num)) {
 					log.error("序列 " + line + " 中，" + input[i] + " 不是有效数字，必须在"
 							+ SSH.RED.getMIN() + "和" + SSH.RED.getMAX() + "之间");
-					continue;
+					return null;
 				}
 				redList.add(input[i]);
 			}
