@@ -412,6 +412,28 @@ public enum SSH {
 			int type = distributedList[0] * 100 + distributedList[1] * 10 + distributedList[2] * 1;
 			return RedDistributed.getRedDistributed(type);
 		}
+		
+		/**
+		 * 获取算法SimpleSpan3V5使用RedDistributed时，在redis中存储的key
+		 * @param distribution
+		 * @return
+		 */
+		public static String getRedisKeyOfSimpleSpan3V5(int distribution) {
+			
+			return "topn_combination:simple_span3v5:" + String.format("%03d", distribution);
+			
+		}
+		
+		/**
+		 * 获取所有使用RedDistributed的算法的所有组合，在redis中存储的key
+		 * @param distribution
+		 * @return
+		 */
+		public static String getRedisKeyOfTotal() {
+			
+			return "topn_combination";
+			
+		}
 	}
 	
 	/**
@@ -424,9 +446,39 @@ public enum SSH {
 	 */
 	public enum SingleRedDistributed {
 		
-		LEFT(0, "RED"), 
-		MIDDLE(1, "MIDDLE"),
-		RIGHT(2, "RIGHT");
+		LEFT(0, "LEFT") {
+			@Override
+			public int getMAX() {
+				return 11;
+			}
+
+			@Override
+			public int getMIN() {
+				return 1;
+			}
+		}, 
+		MIDDLE(1, "MIDDLE") {
+			@Override
+			public int getMAX() {
+				return 22;
+			}
+
+			@Override
+			public int getMIN() {
+				return 12;
+			}
+		},
+		RIGHT(2, "RIGHT") {
+			@Override
+			public int getMAX() {
+				return 33;
+			}
+
+			@Override
+			public int getMIN() {
+				return 23;
+			}
+		};
 	
 		public static final int TOTAL = 3;
 		
@@ -490,6 +542,17 @@ public enum SSH {
 			return getSingleRedDistributed((type - 1) / 11);
 			
 		}
+		
+		/**
+		 * 返回某区间的最大值
+		 * @return
+		 */
+		public abstract int getMAX();
+		/**
+		 * 返回某区间的最小值
+		 * @return
+		 */
+		public abstract int getMIN();
 	}
 	
 	public static void main(String[] args) {

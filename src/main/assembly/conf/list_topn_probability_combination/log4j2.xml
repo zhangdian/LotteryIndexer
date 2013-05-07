@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="info" name="list_topn_probability_combination" packages="">
+	<appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern> %d{MM-dd HH:mm:ss,SSS}:%p %t %c - %m%n</pattern>
+			</PatternLayout>
+		</Console>
+
+		<RollingFile name="ROLL-FILE" fileName="../logs/app_list_topn_probability_combination.log"
+			filePattern="../logs/app_list_topn_probability_combination-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>%d{MM-dd HH:mm:ss,SSS}:%p %t %c - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="1024 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="15" />
+		</RollingFile>
+
+		<!-- <Syslog name="SYSLOG" appName="Reputation" host="localhost" port="514" 
+			protocol="TCP" facility="LOCAL1" charset="UTF-8" newLine="true" includeMDC="false" 
+			> <MarkerFilter marker="MX" onMatch="ACCEPT" onMismatch="DENY"/> </Syslog> -->
+	</appenders>
+
+	<loggers>
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="ROLL-FILE" />
+			<!-- <appender-ref ref="SYSLOG"/> -->
+		</root>
+	</loggers>
+</configuration>

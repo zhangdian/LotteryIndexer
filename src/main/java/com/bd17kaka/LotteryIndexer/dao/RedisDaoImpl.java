@@ -1,6 +1,7 @@
 package com.bd17kaka.LotteryIndexer.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,35 +9,34 @@ import org.springframework.stereotype.Repository;
 
 import redis.clients.jedis.ShardedJedis;
 
-import com.bd17kaka.LotteryIndexer.api.SSHIndexer;
-
 /**
- * 将数据存储在Redis中
+ * Redis操作
  * @author bd17kaka
  */
 @Repository(value="redisDao")
 public class RedisDaoImpl extends RedisUtils implements RedisDao {
 
-	private static final Log log = LogFactory.getLog(SSHIndexer.class);
+	private static final Log log = LogFactory.getLog(RedisDaoImpl.class);
 
 	public void insert(List<String> indexs, String redisKey) {
-		
+
 		if (null != indexs) {
-			
+		
 			ShardedJedis redis = getConnection();
-			
+		   
 			for (String key : indexs) {
-				
-				redis.hincrBy(redisKey, key, 1);
-				log.info("为" + key + "的出现次数加1");
-				
+		   
+		   	redis.hincrBy(redisKey, key, 1);
+		   	log.info("为" + key + "的出现次数加1");
+		   
 			}
-			
+		                       
 			returnConnection(redis);
 		}
-		
+		              
 	}
-
+	
+	
 	public int hget(String key, String field) {
 		
 		ShardedJedis redis = getConnection();
@@ -58,6 +58,28 @@ public class RedisDaoImpl extends RedisUtils implements RedisDao {
 		ShardedJedis redis = getConnection();
 
 		redis.hset(redisKey, field, value);
+		
+		returnConnection(redis);
+		
+	}
+
+	public Map<String, String> hgetAll(String redisKey) {
+		
+		ShardedJedis redis = getConnection();
+
+		Map<String, String> map = redis.hgetAll(redisKey);
+		
+		returnConnection(redis);
+		
+		return map;
+		
+	}
+
+	public void del(String redisKey) {
+
+		ShardedJedis redis = getConnection();
+
+		redis.del(redisKey);
 		
 		returnConnection(redis);
 		

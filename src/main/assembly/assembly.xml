@@ -12,10 +12,25 @@
 			<fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/assembly/conf</directory>
-			<outputDirectory>LotteryIndexer/conf</outputDirectory>
+			<directory>src/main/assembly/conf/conf_ssh_file2db_sync</directory>
+			<outputDirectory>LotteryIndexer/conf/conf_ssh_file2db_sync</outputDirectory>
 			<fileMode>0644</fileMode>
 		</fileSet>
+		
+		<fileSet>
+			<directory>src/main/assembly/conf/conf_ssh_indexer</directory>
+			<outputDirectory>LotteryIndexer/conf/conf_ssh_indexer</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
+		
+		<fileSet>
+			<directory>src/main/assembly/conf/list_topn_probability_combination</directory>
+			<outputDirectory>LotteryIndexer/conf/list_topn_probability_combination</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
+		
+		
+		
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
