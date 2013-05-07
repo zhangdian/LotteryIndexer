@@ -132,6 +132,7 @@ public class ListTopNCombination {
 				
 			}
 			
+			Map<String, Double> rsTotalMap	= new HashMap<String, Double>();
 			Set<Integer> keys = mapRedDistributed.keySet();
 			for (Integer key : keys) {
 
@@ -139,7 +140,6 @@ public class ListTopNCombination {
 				
 				// 结果集
 				Map<String, Double> rsMap 		= new HashMap<String, Double>();
-				Map<String, Double> rsTotalMap	= new HashMap<String, Double>();
 				
 				// 找到分解线
 				Integer[] ballsStart = new Integer[6]; // 值为0代表将start赋值为上一维的start+1
@@ -304,20 +304,22 @@ public class ListTopNCombination {
 				}
 				rsMap.clear();
 				
-				rsKeys = rsTotalMap.keySet();
-				if (rsKeys == null) {
-					return;
-				}
-				redisKey = RedDistributed.getRedisKeyOfSimpleSpan3V5Total();
-				redisDao.del(redisKey);
-				for (String rsKey : rsKeys) {
-					String redisField	= rsKey;
-					String redisValue	= String.valueOf(rsTotalMap.get(rsKey));
-					redisDao.hset(redisKey, redisField, redisValue);
-					log.info("\t<" + redisField + ", " + redisValue + ">");
-				}
-				rsTotalMap.clear();
 			}
+			
+
+			Set<String> rsKeys = rsTotalMap.keySet();
+			if (rsKeys == null) {
+				return;
+			}
+			String redisKey = RedDistributed.getRedisKeyOfSimpleSpan3V5Total();
+			redisDao.del(redisKey);
+			for (String rsKey : rsKeys) {
+				String redisField	= rsKey;
+				String redisValue	= String.valueOf(rsTotalMap.get(rsKey));
+				redisDao.hset(redisKey, redisField, redisValue);
+				log.info("\t<" + redisField + ", " + redisValue + ">");
+			}
+			rsTotalMap.clear();
 			
 		}
 		
