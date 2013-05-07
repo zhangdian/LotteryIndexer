@@ -429,9 +429,9 @@ public enum SSH {
 		 * @param distribution
 		 * @return
 		 */
-		public static String getRedisKeyOfTotal() {
+		public static String getRedisKeyOfSimpleSpan3V5Total() {
 			
-			return "topn_combination";
+			return "topn_combination:simple_span3v5";
 			
 		}
 	}

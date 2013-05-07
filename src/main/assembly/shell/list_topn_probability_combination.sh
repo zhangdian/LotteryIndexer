@@ -15,7 +15,7 @@ LIB_JARS=`ls  $LIB_DIR | grep .jar|awk '{print "'$LIB_DIR'/"$0}'|tr "\n" ":"`
 #echo $LIB_JAR
 echo -e "Starting ListTopNCombination process...\c"
 
-nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotterySearcher.api.ListTopNCombination $1 $2 &
+nohup java $JAVA_MEM_OPTS -classpath $CONFIG_DIR:$LIB_JARS com.bd17kaka.LotteryIndexer.api.ListTopNCombination $1 $2 &
 #nohup java -classpath $CONFIG_DIR:$LIB_JARS -jar LotterySearcher-0.0.1-SNAPSHOT.jar &
 
 PID=`ps aux|grep ListTopNCombination |grep java|awk '{print $2}'`

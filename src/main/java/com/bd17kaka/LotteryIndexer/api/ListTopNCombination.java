@@ -308,11 +308,11 @@ public class ListTopNCombination {
 				if (rsKeys == null) {
 					return;
 				}
-				redisKey = RedDistributed.getRedisKeyOfTotal();
+				redisKey = RedDistributed.getRedisKeyOfSimpleSpan3V5Total();
 				redisDao.del(redisKey);
 				for (String rsKey : rsKeys) {
 					String redisField	= rsKey;
-					String redisValue	= String.valueOf(rsMap.get(rsKey));
+					String redisValue	= String.valueOf(rsTotalMap.get(rsKey));
 					redisDao.hset(redisKey, redisField, redisValue);
 					log.info("\t<" + redisField + ", " + redisValue + ">");
 				}
