@@ -412,28 +412,6 @@ public enum SSH {
 			int type = distributedList[0] * 100 + distributedList[1] * 10 + distributedList[2] * 1;
 			return RedDistributed.getRedDistributed(type);
 		}
-		
-		/**
-		 * 获取算法SimpleSpan3V5使用RedDistributed时，在redis中存储的key
-		 * @param distribution
-		 * @return
-		 */
-		public static String getRedisKeyOfSimpleSpan3V5(int distribution) {
-			
-			return "topn_combination:simple_span3v5:" + String.format("%03d", distribution);
-			
-		}
-		
-		/**
-		 * 获取所有使用RedDistributed的算法的所有组合，在redis中存储的key
-		 * @param distribution
-		 * @return
-		 */
-		public static String getRedisKeyOfSimpleSpan3V5Total() {
-			
-			return "topn_combination:simple_span3v5";
-			
-		}
 	}
 	
 	/**
@@ -553,6 +531,94 @@ public enum SSH {
 		 * @return
 		 */
 		public abstract int getMIN();
+	}
+	
+	
+	/**
+	 * @author bd17kaka
+	 * 算法种类
+	 */
+	public enum SSHRedAlgorithm{
+		
+		SIMPLE_SPAN2(0, "simple_span2"),
+		SIMPLE_SPAN3(1, "simple_span2"),
+		SIMPLE_SPAN3V2(2, "simple_span3v2"),
+		SIMPLE_SPAN3V3(3, "simple_span3v3"),
+		SIMPLE_SPAN3V5(4, "simple_span3v5");
+		
+		private int type;
+		private String des;
+
+		private SSHRedAlgorithm(int type, String des) {
+
+			this.type = type;
+			this.des = des;
+		}
+		
+		public int getType() {
+			return type;
+		}
+
+		public void setType(int type) {
+			this.type = type;
+		}
+
+		public String getDes() {
+			return des;
+		}
+
+		public void setDes(String des) {
+			this.des = des;
+		}
+
+		public static Map<Integer, SSHRedAlgorithm> getReddistributedMap() {
+			return SSHRedAlgorithmMAP;
+		}
+
+		/**
+		 * get object from key
+		 */
+		private static final Map<Integer, SSHRedAlgorithm> SSHRedAlgorithmMAP;
+		static {
+			SSHRedAlgorithmMAP = new HashMap<Integer, SSHRedAlgorithm>();
+			for (SSHRedAlgorithm l : values()) {
+				SSHRedAlgorithmMAP.put(l.getType(), l);
+			}
+		}
+		public static SSHRedAlgorithm getSSHRedAlgorithm(int type) {
+			return SSHRedAlgorithmMAP.get(type);
+		} 
+		
+		/**
+		 * 只供SimpleSpan3V5使用
+		 * 获取使用算法SimpleSpan3V5时，每个组合的TopN记录的key
+		 * @param distribution
+		 * @return
+		 */
+		public static String getRedisKeyOfTopNCombinationByDistribution(int distribution) {
+			
+			return "topn_combination:simple_span3v5:" + String.format("%03d", distribution);
+			
+		}
+		
+		/**
+		 * 获取全局的TopN组合的key
+		 * @param distribution
+		 * @return
+		 */
+		public static String getRedisKeyOfTotalTopNCombination(SSHRedAlgorithm algorithm) {
+			
+			return "topn_combination:" + algorithm.getDes();
+			
+		}
+		
+		/**
+		 * 获取全局TopN组合的最大数量
+		 * @return
+		 */
+		public static int getMaxTotal() {
+			return 10;
+		}
 	}
 	
 	public static void main(String[] args) {
