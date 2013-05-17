@@ -995,11 +995,11 @@ public class ListTopNCombination {
 					int curNum = Integer.parseInt(tokens[i]);
 					for (int j = 0; j < curNum; j++) {
 						if (j == 0) {
-							ballsStart[i + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMIN();
+							ballsStart[j + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMIN();
 						} else {
-							ballsStart[i + curTotal] = 0;
+							ballsStart[j + curTotal] = 0;
 						}
-						ballsEnd[i + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMAX();
+						ballsEnd[j + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMAX();
 					}
 					curTotal += curNum;
 				}
