@@ -298,7 +298,7 @@ public enum SSH {
 	 * 		12-22有0个球
 	 * 		23-33有6个球
 	 */
-	public enum RedDistributed {
+	public enum RedDistributedV3 {
 		_006(6, "006"), 
 		_015(15, "015"),
 		_024(24, "024"),
@@ -331,7 +331,7 @@ public enum SSH {
 		private int type;
 		private String des;
 
-		private RedDistributed(int type, String des) {
+		private RedDistributedV3(int type, String des) {
 
 			this.type = type;
 			this.des = des;
@@ -354,21 +354,21 @@ public enum SSH {
 			this.des = des;
 		}
 
-		public static Map<Integer, RedDistributed> getReddistributedMap() {
+		public static Map<Integer, RedDistributedV3> getReddistributedMap() {
 			return RedDistributed_MAP;
 		}
 
 		/**
 		 * get object from key
 		 */
-		private static final Map<Integer, RedDistributed> RedDistributed_MAP;
+		private static final Map<Integer, RedDistributedV3> RedDistributed_MAP;
 		static {
-			RedDistributed_MAP = new HashMap<Integer, RedDistributed>();
-			for (RedDistributed l : values()) {
+			RedDistributed_MAP = new HashMap<Integer, RedDistributedV3>();
+			for (RedDistributedV3 l : values()) {
 				RedDistributed_MAP.put(l.getType(), l);
 			}
 		}
-		public static RedDistributed getRedDistributed(int type) {
+		public static RedDistributedV3 getRedDistributed(int type) {
 			return RedDistributed_MAP.get(type);
 		} 
 		
@@ -377,7 +377,7 @@ public enum SSH {
 		 * @param input 经过SSH.getNumsFromInuput()处理之后的所有球号列表
 		 * @return
 		 */
-		public static RedDistributed getRedBallDistributed(List<String> input) {
+		public static RedDistributedV3 getRedBallDistributed(List<String> input) {
 			
 			if (null == input) {
 				return null;
@@ -389,14 +389,14 @@ public enum SSH {
 			 * distributedList[1]: Middle个数
 			 * distributedList[2]: Right个数
 			 */
-			Integer[] distributedList = new Integer[SingleRedDistributed.getTOTAL()];
-			for (int i = 0; i < SingleRedDistributed.getTOTAL(); i++) {
+			Integer[] distributedList = new Integer[SingleRedDistributedV3.getTOTAL()];
+			for (int i = 0; i < SingleRedDistributedV3.getTOTAL(); i++) {
 				distributedList[i] = new Integer(0);
 			}
 			
 			for (String item : input) {
 				
-				SingleRedDistributed rs = SingleRedDistributed.testRedDistributed(item);
+				SingleRedDistributedV3 rs = SingleRedDistributedV3.testRedDistributed(item);
 				if (rs == null) {
 					return null;
 				}
@@ -410,7 +410,7 @@ public enum SSH {
 			 * Left个数*100 + Middle个数*10 + Right个数 * 1
 			 */
 			int type = distributedList[0] * 100 + distributedList[1] * 10 + distributedList[2] * 1;
-			return RedDistributed.getRedDistributed(type);
+			return RedDistributedV3.getRedDistributed(type);
 		}
 	}
 	
@@ -422,7 +422,7 @@ public enum SSH {
 	 * 12-22是middle
 	 * 23-33是right
 	 */
-	public enum SingleRedDistributed {
+	public enum SingleRedDistributedV3 {
 		
 		LEFT(0, "LEFT") {
 			@Override
@@ -467,7 +467,7 @@ public enum SSH {
 		private int type;
 		private String des;
 
-		private SingleRedDistributed(int type, String des) {
+		private SingleRedDistributedV3(int type, String des) {
 
 			this.type = type;
 			this.des = des;
@@ -492,14 +492,14 @@ public enum SSH {
 		/**
 		 * get object from key
 		 */
-		private static final Map<Integer, SingleRedDistributed> SingleRedDistributed_MAP;
+		private static final Map<Integer, SingleRedDistributedV3> SingleRedDistributed_MAP;
 		static {
-			SingleRedDistributed_MAP = new HashMap<Integer, SingleRedDistributed>();
-			for (SingleRedDistributed l : values()) {
+			SingleRedDistributed_MAP = new HashMap<Integer, SingleRedDistributedV3>();
+			for (SingleRedDistributedV3 l : values()) {
 				SingleRedDistributed_MAP.put(l.getType(), l);
 			}
 		}
-		public static SingleRedDistributed getSingleRedDistributed(int type) {
+		public static SingleRedDistributedV3 getSingleRedDistributed(int type) {
 			return SingleRedDistributed_MAP.get(type);
 		} 
 		
@@ -508,7 +508,7 @@ public enum SSH {
 		 * @param ball
 		 * @return
 		 */
-		public static SingleRedDistributed testRedDistributed (String ball) {
+		public static SingleRedDistributedV3 testRedDistributed (String ball) {
 
 			int type = 0;
 			try {
@@ -536,6 +536,256 @@ public enum SSH {
 	
 	/**
 	 * @author bd17kaka
+	 * 单个红球的分布
+	 * 
+	 * 01-11是left
+	 * 12-22是middle
+	 * 23-33是right
+	 */
+	public enum SingleRedDistributedV11 {
+		
+		ONE(1, "ONE") {
+			@Override
+			public int getMAX() {
+				return 3;
+			}
+
+			@Override
+			public int getMIN() {
+				return 1;
+			}
+		}, 
+		TWO(2, "TWO") {
+			@Override
+			public int getMAX() {
+				return 6;
+			}
+
+			@Override
+			public int getMIN() {
+				return 4;
+			}
+		},
+		THREE(3, "THREE") {
+			@Override
+			public int getMAX() {
+				return 9;
+			}
+
+			@Override
+			public int getMIN() {
+				return 7;
+			}
+		},
+		FOUR(4, "FOUR") {
+			@Override
+			public int getMAX() {
+				return 12;
+			}
+
+			@Override
+			public int getMIN() {
+				return 10;
+			}
+		},
+		FIVE(5, "FIVE") {
+			@Override
+			public int getMAX() {
+				return 15;
+			}
+
+			@Override
+			public int getMIN() {
+				return 13;
+			}
+		},
+		SIX(6, "SIX") {
+			@Override
+			public int getMAX() {
+				return 18;
+			}
+
+			@Override
+			public int getMIN() {
+				return 16;
+			}
+		},
+		SEVEN(7, "SEVEN") {
+			@Override
+			public int getMAX() {
+				return 21;
+			}
+
+			@Override
+			public int getMIN() {
+				return 19;
+			}
+		},
+		EIGHT(8, "EIGHT") {
+			@Override
+			public int getMAX() {
+				return 24;
+			}
+
+			@Override
+			public int getMIN() {
+				return 22;
+			}
+		},
+		NINE(9, "NINE") {
+			@Override
+			public int getMAX() {
+				return 27;
+			}
+
+			@Override
+			public int getMIN() {
+				return 25;
+			}
+		},
+		TEN(10, "TEN") {
+			@Override
+			public int getMAX() {
+				return 30;
+			}
+
+			@Override
+			public int getMIN() {
+				return 28;
+			}
+		},
+		ELEVEN(11, "ELEVEN") {
+			@Override
+			public int getMAX() {
+				return 33;
+			}
+
+			@Override
+			public int getMIN() {
+				return 31;
+			}
+		};
+
+		public static final int TOTAL = 11;
+		
+		public static int getTOTAL() {
+			return TOTAL;
+		}
+		
+		private int type;
+		private String des;
+
+		private SingleRedDistributedV11(int type, String des) {
+
+			this.type = type;
+			this.des = des;
+		}
+
+		public int getType() {
+			return type;
+		}
+
+		public void setType(int type) {
+			this.type = type;
+		}
+
+		public String getDes() {
+			return des;
+		}
+
+		public void setDes(String des) {
+			this.des = des;
+		}
+		
+		/**
+		 * get object from key
+		 */
+		private static final Map<Integer, SingleRedDistributedV11> SingleRedDistributed_MAP;
+		static {
+			SingleRedDistributed_MAP = new HashMap<Integer, SingleRedDistributedV11>();
+			for (SingleRedDistributedV11 l : values()) {
+				SingleRedDistributed_MAP.put(l.getType(), l);
+			}
+		}
+		public static SingleRedDistributedV11 getSingleRedDistributed(int type) {
+			return SingleRedDistributed_MAP.get(type);
+		} 
+		
+		/**
+		 * 判断一个球属于哪种分布
+		 * @param ball
+		 * @return
+		 */
+		public static SingleRedDistributedV11 testRedDistributed (String ball) {
+
+			int type = 0;
+			try {
+				type = Integer.parseInt(ball);
+			} catch (Exception e) {
+				return null;
+			}
+			
+			return getSingleRedDistributed((type - 1) / 3 + 1);
+			
+		}
+		
+		/**
+		 * 返回某区间的最大值
+		 * @return
+		 */
+		public abstract int getMAX();
+		/**
+		 * 返回某区间的最小值
+		 * @return
+		 */
+		public abstract int getMIN();
+		
+		
+		/**
+		 * 获取11个区间，6个球，所有的排列方式
+		 * 每个组合从的每个数字用空格分隔，如：1 1 1 1 1 1 0 0 0 0 0
+		 * @return
+		 */
+		public static List<String> listDistribute() {
+			
+			List<String> list = new ArrayList<String>();
+			listDistributeMain(11, 6, "", list);
+			return list;
+		}
+		public static int listDistributeMain (int holes, int balls, String curDistribute, List<String> listDistribute) {
+			
+			if (holes == 1) {
+				if (balls <= 3 && balls >= 0) {
+					curDistribute += balls;
+					listDistribute.add(curDistribute);
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			}
+			if (balls == 0) {
+				for (int i = 0; i < holes; i++) {
+					curDistribute += "0";
+				}
+				listDistribute.add(curDistribute);
+				return 1;
+				
+			} else if (balls < 0) {
+			
+				return 0;
+			}
+			
+			int curHoles = holes - 1;
+			return listDistributeMain(curHoles, balls, curDistribute+"0", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 1, curDistribute+"1", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 2, curDistribute+"2", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 3, curDistribute+"3", listDistribute);  
+		}
+	}
+	
+	/**
+	 * @author bd17kaka
 	 * 算法种类
 	 */
 	public enum SSHRedAlgorithm{
@@ -544,7 +794,8 @@ public enum SSH {
 		SIMPLE_SPAN3(1, "simple_span2"),
 		SIMPLE_SPAN3V2(2, "simple_span3v2"),
 		SIMPLE_SPAN3V3(3, "simple_span3v3"),
-		SIMPLE_SPAN3V5(4, "simple_span3v5");
+		SIMPLE_SPAN3V5(4, "simple_span3v5"),
+		SIMPLE_SPAN3V6(5, "simple_span3v6");
 		
 		private int type;
 		private String des;
@@ -590,16 +841,26 @@ public enum SSH {
 		} 
 		
 		/**
-		 * 只供SimpleSpan3V5使用
+		 * 只供SimpleSpan3V5和SimpleSpan3V5使用
 		 * 获取使用算法SimpleSpan3V5时，每个组合的TopN记录的key
 		 * @param distribution
 		 * @return
 		 */
-		public static String getRedisKeyOfTopNCombinationByDistribution(int distribution) {
+		public static String getRedisKeyOfTopNCombinationByDistribution(SSHRedAlgorithm algorithm, int distribution) {
 			
-			return "topn_combination:simple_span3v5:" + String.format("%03d", distribution);
-			
+			return "topn_combination:" + algorithm.getDes() + ":" + String.format("%03d", distribution);
 		}
+		/**
+		 * 只供SimpleSpan3V5和SimpleSpan3V5使用
+		 * 获取使用算法SimpleSpan3V5时，每个组合的TopN记录的key
+		 * @param distribution
+		 * @return
+		 */
+		public static String getRedisKeyOfTopNCombinationByDistribution(SSHRedAlgorithm algorithm, String distribution) {
+			
+			return "topn_combination:" + algorithm.getDes() + ":" + distribution;
+		}
+		
 		
 		/**
 		 * 获取全局的TopN组合的key
@@ -617,9 +878,10 @@ public enum SSH {
 		 * @return
 		 */
 		public static int getMaxTotal() {
-			return 10;
+			return 50;
 		}
 	}
+	
 	
 	public static void main(String[] args) {
 		String input = "02,04,11,15,23,33";
@@ -628,6 +890,6 @@ public enum SSH {
 			System.out.println(string);
 		}
 		
-		System.out.println(RedDistributed.getRedBallDistributed(list));
+		System.out.println(RedDistributedV3.getRedBallDistributed(list));
 	}
 }

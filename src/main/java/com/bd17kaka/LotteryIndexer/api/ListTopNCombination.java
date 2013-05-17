@@ -14,8 +14,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.bd17kaka.LotteryIndexer.constat.SSH;
-import com.bd17kaka.LotteryIndexer.constat.SSH.RedDistributed;
+import com.bd17kaka.LotteryIndexer.constat.SSH.RedDistributedV3;
 import com.bd17kaka.LotteryIndexer.constat.SSH.SSHRedAlgorithm;
+import com.bd17kaka.LotteryIndexer.constat.SSH.SingleRedDistributedV11;
 import com.bd17kaka.LotteryIndexer.dao.RedisDao;
 
 /**
@@ -111,13 +112,25 @@ public class ListTopNCombination {
 	 * 		key: 	"topn_combination:simple_span3v5:${distribution}"
 	 * 		field: 	${combination}
 	 * 		value:	${probabolity}
+	 * 
+	 * ************************************************************************
+	 * 
+	 * simple_span3v6:
+	 * 	和simple_span3v5相比，单个组合计算概率的方式还是一样，
+	 * 	但是求topN的组合的算法改变了，
+	 * 	将33个球分成11个部分
+	 * 		key: 	"topn_combination:simple_span3v5:${distribution}"
+	 * 		field: 	${combination}
+	 * 		value:	${probabolity}
 	 */
 	public static void main(String[] args) {
 
+		int DEFAULT_TOTAL = 10;
+		
 		// 获取输入参数
 		String type = "";
-		int total = 10;
-		int globalTotal = 20;
+		int total = DEFAULT_TOTAL;
+		int globalTotal = 0;
 		
 		if (args.length == 0) {
 			log.error("请输入正确的参数：[type, total, [globalTotal]]");
@@ -130,15 +143,15 @@ public class ListTopNCombination {
 				total = SSHRedAlgorithm.getMaxTotal();
 			}
 		} catch (Exception e) {
-			total = SSHRedAlgorithm.getMaxTotal();
+			total = DEFAULT_TOTAL;
 		}
 		try {
 			globalTotal = Integer.parseInt(args[2]);
-			if (globalTotal < 20) {
-				globalTotal = 20;
+			if (globalTotal < SSHRedAlgorithm.getMaxTotal()) {
+				globalTotal = SSHRedAlgorithm.getMaxTotal();
 			}
 		} catch (Exception e) {
-			globalTotal = 20;
+			globalTotal = SSHRedAlgorithm.getMaxTotal();
 		}
 		
 		if ("simple_span3v5".equals(type)) {
@@ -151,9 +164,9 @@ public class ListTopNCombination {
 			 * value:	${probabolity}
 			 */
 			
-			log.info("*******************simple_span2v5*********************");
+			log.info("*******************simple_span3v5*********************");
 			
-			Map<Integer, RedDistributed> mapRedDistributed = SSH.RedDistributed.getReddistributedMap();
+			Map<Integer, RedDistributedV3> mapRedDistributed = SSH.RedDistributedV3.getReddistributedMap();
 			if (null == mapRedDistributed) {
 				return;
 			}
@@ -210,31 +223,31 @@ public class ListTopNCombination {
 				leftNum = key / 100;
 				for (int i = 0; i < leftNum; i++) {
 					if (i == 0) {
-						ballsStart[i] = SSH.SingleRedDistributed.LEFT.getMIN();
+						ballsStart[i] = SSH.SingleRedDistributedV3.LEFT.getMIN();
 					} else {
 						ballsStart[i] = 0;
 					}
-					ballsEnd[i] = SSH.SingleRedDistributed.LEFT.getMAX();
+					ballsEnd[i] = SSH.SingleRedDistributedV3.LEFT.getMAX();
 				}
 				
 				middleNum = (key % 100) / 10;
 				for (int i = 0; i < middleNum; i++) {
 					if (i == 0) {
-						ballsStart[leftNum + i] = SSH.SingleRedDistributed.MIDDLE.getMIN();
+						ballsStart[leftNum + i] = SSH.SingleRedDistributedV3.MIDDLE.getMIN();
 					} else {
 						ballsStart[leftNum + i] = 0;
 					}
-					ballsEnd[leftNum + i] = SSH.SingleRedDistributed.MIDDLE.getMAX();
+					ballsEnd[leftNum + i] = SSH.SingleRedDistributedV3.MIDDLE.getMAX();
 				}
 				
 				rightNum = ((key % 100) % 10) / 1;
 				for (int i = 0; i < rightNum; i++) {
 					if (i == 0) {
-						ballsStart[leftNum + middleNum + i] = SSH.SingleRedDistributed.RIGHT.getMIN();
+						ballsStart[leftNum + middleNum + i] = SSH.SingleRedDistributedV3.RIGHT.getMIN();
 					} else {
 						ballsStart[leftNum + middleNum + i] = 0;
 					}
-					ballsEnd[leftNum + middleNum + i] = SSH.SingleRedDistributed.RIGHT.getMAX();
+					ballsEnd[leftNum + middleNum + i] = SSH.SingleRedDistributedV3.RIGHT.getMAX();
 				}
 
 				// 应用SimpleSpan3V3算法, 下面代表六个球
@@ -354,7 +367,7 @@ public class ListTopNCombination {
 				if (rsKeys == null) {
 					return;
 				}
-				String redisKey = SSHRedAlgorithm.getRedisKeyOfTopNCombinationByDistribution(key);
+				String redisKey = SSHRedAlgorithm.getRedisKeyOfTopNCombinationByDistribution(SSHRedAlgorithm.SIMPLE_SPAN3V5, key);
 				redisDao.del(redisKey);
 				for (String rsKey : rsKeys) {
 					String redisField	= rsKey;
@@ -912,7 +925,230 @@ public class ListTopNCombination {
 				log.info("\t<" + redisField + ", " + redisValue + ">");
 			}
 			rsMap.clear();
+			
+		} else if ("simple_span3v6".equals(type)) {
+			
+			/**
+			 * 获取所有分布情况，然后获取每种分布的TopN的组合
+			 * 将这些组合存储到Redis中
+			 * key: 	"topn_combination:simple_span3v6:${distribution}"
+			 * field: 	${combination}
+			 * value:	${probabolity}
+			 */
+			
+			log.info("*******************simple_span3v6*********************");
+			
+			List<String> listDistribute = SingleRedDistributedV11.listDistribute();
+			if (null == listDistribute || 0 == listDistribute.size()) {
+				return;
+			}
+			
+			// 保存长度为1-3的所有组合的出现个数
+			Map<String, Integer> combinationMap = new HashMap<String, Integer>();
+			int q = 1, w = 1, r = 1;
+			int max = SSH.RED.getMAX();
+			for (; q <= max; q++) {
+
+				String field = "";
+				int value = 0;
+
+				field =  String.format("%02d", q); 
+				value = redisDao.hget(SSH.RED.getRedisKey(), field);
+				combinationMap.put(field, value);
+				
+				for (w = q + 1; w <=max; w++) {
+
+					field =  String.format("%02d", q) 
+							+ ":" + String.format("%02d", w);
+					value = redisDao.hget(SSH.RED.getRedisKey(), field);
+					combinationMap.put(field, value);
+
+					for (r = w + 1; r <=max; r++) {
+						
+						field =  String.format("%02d", q) 
+								+ ":" + String.format("%02d", w) 
+								+ ":" + String.format("%02d", r);
+						value = redisDao.hget(SSH.RED.getRedisKey(), field);
+						combinationMap.put(field, value);
+					}
+					
+				}
+				
+			}
+			
+			Map<String, Double> rsTotalMap	= new HashMap<String, Double>();
+			for (String key : listDistribute) {
+
+				log.info("Key: " + key);
+				
+				// 结果集
+				Map<String, Double> rsMap = new HashMap<String, Double>();
+				
+				// 找到分解线
+				Integer[] ballsStart = new Integer[6]; // 值为0代表将start赋值为上一维的start+1
+				Integer[] ballsEnd = new Integer[6];
+				
+				String[] tokens = key.split(" ");
+				int curTotal = 0;
+				for (int i = 0; i < SingleRedDistributedV11.getTOTAL(); i++) {
+					
+					int curNum = Integer.parseInt(tokens[i]);
+					for (int j = 0; j < curNum; j++) {
+						if (j == 0) {
+							ballsStart[i + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMIN();
+						} else {
+							ballsStart[i + curTotal] = 0;
+						}
+						ballsEnd[i + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMAX();
+					}
+					curTotal += curNum;
+				}
+
+				// 应用SimpleSpan3V6算法(算法和SimpleSpan3V5一样), 下面代表六个球
+				int a = ballsStart[0], 
+					b = 1, 
+					c = 1,
+					d = 1,
+					e = 1,
+					f = 1;
+				for (; a <= ballsEnd[0]; a++) {
+					b = (ballsStart[1] == 0) ? (a + 1) : ballsStart[1];
+					for (;b <= ballsEnd[1]; b++) {
+						c = (ballsStart[2] == 0) ? (b + 1) : ballsStart[2];
+						for (; c <= ballsEnd[2]; c++) {
+							d = (ballsStart[3] == 0) ? (c + 1) : ballsStart[3];
+							for (; d <= ballsEnd[3]; d++) {
+								e = (ballsStart[4] == 0) ? (d + 1) : ballsStart[4];
+								for (; e <= ballsEnd[4]; e++) {
+									f = (ballsStart[5] == 0) ? (e + 1) : ballsStart[5];
+									for (; f <= ballsEnd[5]; f++) {
+										
+										// 分子 分母
+										long molecular = 10000; 
+										long denominator = 1;
+										String field = "";
+										
+										// 计算分子
+										field =  String.format("%02d", a) 
+												+ ":" + String.format("%02d", b) 
+												+ ":" + String.format("%02d", c);
+										molecular *= combinationMap.get(field);
+										field =  String.format("%02d", b) 
+												+ ":" + String.format("%02d", c) 
+												+ ":" + String.format("%02d", d);
+										molecular *= combinationMap.get(field);
+										field =  String.format("%02d", c) 
+												+ ":" + String.format("%02d", d) 
+												+ ":" + String.format("%02d", e);
+										molecular *= combinationMap.get(field);
+										field =  String.format("%02d", d) 
+												+ ":" + String.format("%02d", e) 
+												+ ":" + String.format("%02d", f);
+										molecular *= combinationMap.get(field);
+										molecular *= molecular;
+										
+										// 计算分母
+										field =  String.format("%02d", a);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", b);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", c);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", d);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", b) 
+												+ ":" + String.format("%02d", c);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", c) 
+												+ ":" + String.format("%02d", d);
+										denominator *= combinationMap.get(field);
+										field =  String.format("%02d", d) 
+												+ ":" + String.format("%02d", e);
+										denominator *= combinationMap.get(field);
+										
+										// 保存到结果集
+										field = String.format("%02d", a) 
+												+ ":" + String.format("%02d", b) 
+												+ ":" + String.format("%02d", c) 
+												+ ":" + String.format("%02d", d)
+												+ ":" + String.format("%02d", e)
+												+ ":" + String.format("%02d", f);
+										double rs = 0.0;
+										if (denominator != 0) {
+											rs = (double)molecular / (double)denominator;
+										}
+										rsMap.put(field, rs);
+										rsTotalMap.put(field, rs);
+										log.debug("组合[" + field + "]: " + rs);
+										
+										// 如果结果集超过了size个，进行排序，剔除最后的一个
+										// 分别计算每个分布以及全局
+										if (rsMap.size() > total) {
+											ArrayList<Entry<String, Double>> tmp = new ArrayList<Entry<String, Double>>(rsMap.entrySet());
+											Collections.sort(tmp, new SSHRedProbabilityComparator());
+											Entry<String, Double> which2Del = tmp.get(tmp.size() - 1);
+											rsMap.remove(which2Del.getKey());
+											log.debug("组合[" + which2Del.getKey() + "]被删除, 其概率为" + which2Del.getValue());
+											
+										}
+										if (rsTotalMap.size() > globalTotal) {
+											ArrayList<Entry<String, Double>> tmp = new ArrayList<Entry<String, Double>>(rsTotalMap.entrySet());
+											Collections.sort(tmp, new SSHRedProbabilityComparator());
+											Entry<String, Double> which2Del = tmp.get(tmp.size() - 1);
+											rsTotalMap.remove(which2Del.getKey());
+											log.debug("组合[" + which2Del.getKey() + "]被删除, 其概率为" + which2Del.getValue());
+										}
+									}
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				/**
+				 *  此处已经得到了结果集，首先删除Redis中这个key，然后将结果集存储到Redis中，清空rsMap，进行下一轮
+				 *	key: 	"topn_combination:simple_span3v5:${distribution}"
+				 * 	field: 	${combination}
+				 * 	value:	${probabolity}
+				 */
+				
+				Set<String> rsKeys = rsMap.keySet();
+				if (rsKeys == null) {
+					return;
+				}
+				String redisKey = SSHRedAlgorithm.getRedisKeyOfTopNCombinationByDistribution(SSHRedAlgorithm.SIMPLE_SPAN3V6, key);
+				redisDao.del(redisKey);
+				for (String rsKey : rsKeys) {
+					String redisField	= rsKey;
+					String redisValue	= String.valueOf(rsMap.get(rsKey));
+					redisDao.hset(redisKey, redisField, redisValue);
+					log.info("\t<" + redisField + ", " + redisValue + ">");
+				}
+				rsMap.clear();
+				
+			}
+
+			Set<String> rsKeys = rsTotalMap.keySet();
+			if (rsKeys == null) {
+				return;
+			}
+			String redisKey = SSHRedAlgorithm.getRedisKeyOfTotalTopNCombination(SSHRedAlgorithm.SIMPLE_SPAN3V6);
+			redisDao.del(redisKey);
+			for (String rsKey : rsKeys) {
+				String redisField	= rsKey;
+				String redisValue	= String.valueOf(rsTotalMap.get(rsKey));
+				redisDao.hset(redisKey, redisField, redisValue);
+				log.info("\t<" + redisField + ", " + redisValue + ">");
+			}
+			rsTotalMap.clear();
+			
 		}
 	}
+	
 }
 
