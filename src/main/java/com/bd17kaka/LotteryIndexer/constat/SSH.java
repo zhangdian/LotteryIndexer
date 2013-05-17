@@ -766,7 +766,7 @@ public enum SSH {
 			}
 			if (balls == 0) {
 				for (int i = 0; i < holes; i++) {
-					curDistribute += "0";
+					curDistribute += "0 ";
 				}
 				listDistribute.add(curDistribute);
 				return 1;
@@ -777,10 +777,10 @@ public enum SSH {
 			}
 			
 			int curHoles = holes - 1;
-			return listDistributeMain(curHoles, balls, curDistribute+"0", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 1, curDistribute+"1", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 2, curDistribute+"2", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 3, curDistribute+"3", listDistribute);  
+			return listDistributeMain(curHoles, balls, curDistribute+"0 ", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 1, curDistribute+"1 ", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 2, curDistribute+"2 ", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 3, curDistribute+"3 ", listDistribute);  
 		}
 	}
 	
