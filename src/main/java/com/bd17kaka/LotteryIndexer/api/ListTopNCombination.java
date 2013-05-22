@@ -988,11 +988,11 @@ public class ListTopNCombination {
 				Integer[] ballsStart = new Integer[6]; // 值为0代表将start赋值为上一维的start+1
 				Integer[] ballsEnd = new Integer[6];
 				
-				String[] tokens = key.split(" ");
+				char[] tokens = key.toCharArray();
 				int curTotal = 0;
 				for (int i = 0; i < SingleRedDistributedV11.getTOTAL(); i++) {
 					
-					int curNum = Integer.parseInt(tokens[i]);
+					int curNum = Integer.parseInt(String.valueOf(tokens[i]));
 					for (int j = 0; j < curNum; j++) {
 						if (j == 0) {
 							ballsStart[j + curTotal] = SSH.SingleRedDistributedV11.getSingleRedDistributed(i + 1).getMIN();

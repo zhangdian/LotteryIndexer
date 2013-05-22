@@ -148,7 +148,8 @@ public class File2DBSyncSSH {
 				sshResult.setResult(awardStr);
 				sshResult.setTime(date);
 				sshResult.setType(0);
-				sshResult.setDistribution(SSH.RedDistributedV3.getRedBallDistributed(SSH.RED.getNumsFromInuput(awardStr)).getType());
+				sshResult.setDistributionV3(SSH.RedDistributedV3.getRedBallDistributed(SSH.RED.getNumsFromInuput(awardStr)).getDes());
+				sshResult.setDistributionV11(SSH.SingleRedDistributedV11.getRedBallDistributed(SSH.RED.getNumsFromInuput(awardStr)));
 				sshResultDao.insert(sshResult);
 			}
 			

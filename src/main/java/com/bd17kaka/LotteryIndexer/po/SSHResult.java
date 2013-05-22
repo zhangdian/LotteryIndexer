@@ -25,22 +25,28 @@ public class SSHResult implements java.io.Serializable {
 	private int type;
 
 	/**
-	 * SSH结果中，球号的分布情况
+	 * SSH结果中，球号的分布情况，v3
 	 */
-	private int distribution;
+	private String distributionV3;
+
+	/**
+	 * SSH结果中，球号的分布情况，v11
+	 */
+	private String distributionV11;
+
+	public SSHResult() {
+		super();
+	}
 
 	public SSHResult(String id, Date time, String result, int type,
-			int distribution) {
+			String distributionV3, String distributionV11) {
 		super();
 		this.id = id;
 		this.time = time;
 		this.result = result;
 		this.type = type;
-		this.distribution = distribution;
-	}
-
-	public SSHResult() {
-		super();
+		this.distributionV3 = distributionV3;
+		this.distributionV11 = distributionV11;
 	}
 
 	public String getId() {
@@ -75,17 +81,27 @@ public class SSHResult implements java.io.Serializable {
 		this.type = type;
 	}
 
-	public int getDistribution() {
-		return distribution;
+	public String getDistributionV3() {
+		return distributionV3;
 	}
 
-	public void setDistribution(int distribution) {
-		this.distribution = distribution;
+	public void setDistributionV3(String distributionV3) {
+		this.distributionV3 = distributionV3;
+	}
+
+	public String getDistributionV11() {
+		return distributionV11;
+	}
+
+	public void setDistributionV11(String distributionV11) {
+		this.distributionV11 = distributionV11;
 	}
 
 	@Override
 	public String toString() {
 		return "SSHResult [id=" + id + ", time=" + time + ", result=" + result
-				+ ", type=" + type + ", distribution=" + distribution + "]";
+				+ ", type=" + type + ", distributionV3=" + distributionV3
+				+ ", distributionV11=" + distributionV11 + "]";
 	}
+
 }

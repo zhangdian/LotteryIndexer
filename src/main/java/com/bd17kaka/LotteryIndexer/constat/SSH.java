@@ -740,6 +740,49 @@ public enum SSH {
 		 */
 		public abstract int getMIN();
 		
+		/**
+		 * 获取开奖结果的球号分布
+		 * @param input 经过SSH.getNumsFromInuput()处理之后的所有球号列表
+		 * @return 	有错 返回0
+		 * 			正常 返回11位长度的整数
+		 */
+		public static String getRedBallDistributed(List<String> input) {
+			
+			if (null == input || 0 == input.size()) {
+				return "";
+			}
+		
+			/**
+			 * distributedList[0]: Left个数
+			 * distributedList[1]: Middle个数
+			 * distributedList[2]: Right个数
+			 */
+			Integer[] distributedList = new Integer[SingleRedDistributedV11.getTOTAL()];
+			for (int i = 0; i < SingleRedDistributedV11.getTOTAL(); i++) {
+				distributedList[i] = new Integer(0);
+			}
+			
+			for (String item : input) {
+				
+				SingleRedDistributedV11 rs = SingleRedDistributedV11.testRedDistributed(item);
+				if (rs == null) {
+					return "";
+				}
+				
+				int curVal = distributedList[rs.getType() - 1];
+				distributedList[rs.getType() - 1] = curVal + 1;
+			
+			}
+			
+			/**
+			 *
+			 */
+			String strType = "";
+			for (int i = 0; i < SingleRedDistributedV11.getTOTAL(); i++) {
+				strType += distributedList[i];
+			}
+			return strType;
+		}
 		
 		/**
 		 * 获取11个区间，6个球，所有的排列方式
@@ -766,7 +809,7 @@ public enum SSH {
 			}
 			if (balls == 0) {
 				for (int i = 0; i < holes; i++) {
-					curDistribute += "0 ";
+					curDistribute += "0";
 				}
 				listDistribute.add(curDistribute);
 				return 1;
@@ -777,10 +820,10 @@ public enum SSH {
 			}
 			
 			int curHoles = holes - 1;
-			return listDistributeMain(curHoles, balls, curDistribute+"0 ", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 1, curDistribute+"1 ", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 2, curDistribute+"2 ", listDistribute) 
-					+ listDistributeMain(curHoles, balls - 3, curDistribute+"3 ", listDistribute);  
+			return listDistributeMain(curHoles, balls, curDistribute+"0", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 1, curDistribute+"1", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 2, curDistribute+"2", listDistribute) 
+					+ listDistributeMain(curHoles, balls - 3, curDistribute+"3", listDistribute);  
 		}
 	}
 	
